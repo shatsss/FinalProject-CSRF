@@ -2,28 +2,20 @@ var express = require('express');
 var passport = require('passport');
 var session = require('express-session');
 var RedisStore = require('connect-redis')(session);
+const config = require('/config');
+const app = express();
+const bcrypt = require('bcrypt');
+const LocalStrategy = require('passport-local').Strategy;
+const user = {username: 'test-user', passwordHash: 'bcrypt-hashed-password', id: 1};
 
-const app = express()
 app.use(session({
-    store: new RedisStore({
-        url: config.redisStore.url
-    }),
+    store: new RedisStore({url: config.redisStore.url}),
     secret: config.redisStore.secret,
     resave: false,
     saveUninitialized: false
-}))
-app.use(passport.initialize())
-app.use(passport.session())
-
-const bcrypt = require('bcrypt');
-const LocalStrategy = require('passport-local').Strategy;
-
-const user = {
-    username: 'test-user',
-    passwordHash: 'bcrypt-hashed-password',
-    id: 1
-};
-
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
 // const bcrypt = require('bcrypt');
 // //const LocalStrategy = require('passport-local').Strategy;
